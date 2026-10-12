@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "gymlab": {
+      "type": "http",
+      "url": "https://app.gymlab.ai/mcp"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "gymlab",
+  "displayName": "Gymlab",
+  "version": "1.0.0",
+  "description": "Plan a training program, build a workout for today, review your progress, adjust your training and log sessions in Gymlab, the way Gymlab's own coach does, through the Gymlab connector.",
+  "author": {
+    "name": "Pyrean B.V.",
+    "url": "https://www.gymlab.ai"
+  },
+  "license": "LicenseRef-Gymlab-Proprietary",
+  "homepage": "https://www.gymlab.ai",
+  "repository": "https://github.com/Pyrean/gymlab-claude-plugin",
+  "documentationUrl": "https://www.gymlab.ai/ai-assistants",
+  "supportUrl": "https://www.gymlab.ai/support",
+  "privacyPolicyUrl": "https://www.gymlab.ai/privacy-policy",
+  "termsOfServiceUrl": "https://www.gymlab.ai/terms-of-service"
+}

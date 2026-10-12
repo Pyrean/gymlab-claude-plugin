@@ -1,0 +1,15 @@
+{
+  "name": "gymlab",
+  "owner": {
+    "name": "Pyrean B.V.",
+    "url": "https://www.gymlab.ai"
+  },
+  "description": "Plan a training program, build a workout for today, review your progress, adjust your training and log sessions in Gymlab, the way Gymlab's own coach does, through the Gymlab connector.",
+  "plugins": [
+    {
+      "name": "gymlab",
+      "source": "./",
+      "description": "Plan a training program, build a workout for today, review your progress, adjust your training and log sessions in Gymlab, the way Gymlab's own coach does, through the Gymlab connector."
+    }
+  ]
+}
