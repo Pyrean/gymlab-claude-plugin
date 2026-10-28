@@ -111,7 +111,7 @@ When the save is refused:
 
 ## 7. Present the saved workout and give the link
 
-Keep the reply short. Give the workout's name and length, then its exercises in order as a short list, not a table: each with sets × reps (or time or distance), the load in the member's units, the target RPE and the rest, with supersets and drop sets marked. Add a few plain sentences on why it fits them today, including any adjustment for recovery.
+Keep the reply short. The member sees the saved workout as a card with its exercises and their sets, so do not list them again and never as a table. Say in a sentence or two what you built and why it fits them today, naming the focus and the main lifts and any adjustment for recovery. Where tool results show only as text, as in a terminal, add the exercises as a short list, each with sets × reps (or time or distance) and the load in the member's units.
 
 Say that it is with their saved workouts in Gymlab, on its own and outside any plan; it does not change their plan or which plan they follow. Offer in one sentence to change anything in it. End the reply with `deep_link` as its call to action: it opens the workout in the Gymlab app, where they can start it.
 
@@ -128,4 +128,4 @@ When they want a change:
 3. When an exercise's `allowedExerciseTypes` do not include the way they measure it, tell the member and let them choose another variant or one of the allowed types.
 4. Tell the member what you convert before you do: pounds to kilograms, a rep range to its lower bound with the range in `notes`, a circuit of 2 to 10 different exercises to one `superset_group`. An exercise without a rest gets the member's own rest for it, else the exercise's default, else 90 seconds.
 5. Once nothing is unclear and you have said what you convert, save it with `gymlab_create_workout`, `member_supplied` true and no `interview_id`. Do not first ask them to confirm the whole workout.
-6. List what was saved, each exercise with its sets as saved, so the member can catch a misread, and end the reply with `deep_link` to open it in the Gymlab app. Fix a misread in the saved workout with the adjust-training skill.
+6. Say in a sentence or two what you converted, ask them to check the saved card for anything misread (where tool results show only as text, list each exercise with its sets as saved instead), and end the reply with `deep_link` to open it in the Gymlab app. Fix a misread in the saved workout with the adjust-training skill.

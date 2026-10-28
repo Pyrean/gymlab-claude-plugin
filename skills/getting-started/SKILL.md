@@ -53,7 +53,7 @@ Do not design a plan here or ask the onboarding's questions yourself.
 ### Case B: no plan yet
 
 - Say what Gymlab can do here.
-- Tell them that the first step is their first training plan, which you build together: a few questions about their goal, schedule, equipment and any limitations, then a plan they confirm before it is saved.
+- Tell them that the first step is their first training plan, which you build together: a few questions about their goal, schedule, equipment and any limitations, then a plan saved to their Gymlab account, with a link to open it in the Gymlab app.
 - Ask whether they want to start their first plan now.
 
 When they say yes, use the plan-training skill; it starts with `gymlab_plan_interview`.

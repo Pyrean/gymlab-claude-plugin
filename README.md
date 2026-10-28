@@ -13,8 +13,8 @@ https://www.gymlab.ai/ai-assistants
   you stand (setup, plan, logged sessions) and answers with your next step and one question.
 - `plan-training`: when you want a new training plan or program, want yours rebuilt, or bring a
   program of your own to save, typed, pasted or in a photo. Claude asks Gymlab's plan questions one
-  at a time, reads your training before it designs, saves the plan only after you confirm it, and
-  offers to make it the plan you follow.
+  at a time, reads your training before it designs, saves the plan and gives you a link that opens
+  it in the Gymlab app, and offers to make it the plan you follow.
 - `build-workout`: when you want a single workout for today or another day. Claude asks what you
   want to train, or picks the focus from how recovered your muscles are, fits the workout into the
   time you have, saves it and gives you a link that opens it in the Gymlab app.

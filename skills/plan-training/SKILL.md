@@ -1,6 +1,6 @@
 ---
 name: plan-training
-description: "Use when a Gymlab member asks for a new training plan or program, wants their current plan rebuilt, replaced or adapted to a new goal, schedule, limitation or equipment, or brings a program they already follow (from a coach, a book or their own notes) to save in Gymlab. Interviews the member through the Gymlab plan interview, reads their logged training to set loads, designs the plan to Gymlab's coaching standards, saves it to their Gymlab account once they confirm it, and offers to make it the plan they follow."
+description: "Use when a Gymlab member asks for a new training plan or program, wants their current plan rebuilt, replaced or adapted to a new goal, schedule, limitation or equipment, or brings a program they already follow (from a coach, a book or their own notes) to save in Gymlab. Interviews the member through the Gymlab plan interview, reads their logged training to set loads, designs the plan to Gymlab's coaching standards, saves it to their Gymlab account with a link to open it in the Gymlab app, and offers to make it the plan they follow."
 ---
 
 # Plan training with Gymlab
@@ -92,21 +92,11 @@ Compute each workout's length yourself and keep it within 5 minutes of the lengt
 
 When you leave out `rest_seconds_between_sets`, Gymlab uses the member's own rest for the exercise, else the exercise's default, else 90 seconds: count with the same value. Warm-up and cool-down exercises count too.
 
-Review the draft against "What a finished plan satisfies" in `references/plan-design.md` and fix whatever falls short before you show it.
+Review the draft against "What a finished plan satisfies" in `references/plan-design.md` and fix whatever falls short before you save it.
 
-## 5. Present the plan and wait for confirmation
+## 5. Save the plan
 
-Show the complete plan before you save anything:
-
-- The plan's name, the number of workouts and their order.
-- For each workout: its name, its length, and its exercises in order, each with sets × reps (or time or distance), the load in the member's units, the target RPE and the rest, with supersets and drop sets marked.
-- Why the plan fits them (step 7).
-
-Ask the member to confirm it or say what to change. Change it with them as often as they like, recompute the lengths, and show what changed. Save only the version they confirmed. When they change the goal, how often they train, the length, their equipment or their limitations, record that with `gymlab_plan_interview` first: the plan is saved against the interview's answers.
-
-## 6. Save the plan
-
-After the member has confirmed, make `gymlab_create_plan` the only tool call of its turn. Pass:
+Once the draft passes that review, save it with `gymlab_create_plan` straight away. Do not first show the whole plan and ask whether to save it: the member sees it after the save, with a link to open it, and any change is made to the saved plan. Pass:
 
 - `interview_id`: the complete interview's, before its `valid_until`.
 - `name` (at most 35 characters in English), `goal` in the member's words, and `unit_system` from their `unitSystem`.
@@ -120,13 +110,23 @@ When the save is refused:
 - **The interview was already used to save a plan**: that save most likely went through and only its reply was lost. Look for the plan with `gymlab_list_plans` before you do anything else, and never save it a second time. Another plan needs a new interview.
 - **The interview was refused as not complete, expired or changed**: call `gymlab_plan_interview` with the same `interview_id`: the call brings it up to date. It keeps the member's own answers for seven days after its last call, so a member who comes back to this conversation within that time goes on where they left off; after more than a day it puts what Gymlab has saved to them again, in `to_confirm`. After seven days it starts over, or is not found once deleted: then start a new interview without `interview_id`, and the answers have to be given again.
 
-After saving, give the member `deep_link` to open the plan. It is saved beside the plans they already have, which stay as they are.
+## 6. Present the saved plan and give the link
 
-Then ask whether this plan should be the one they follow. On a yes, call `gymlab_set_active_plan` with its `plan_id`, and tell them that the web app and assistants follow it at once and the Gymlab iPhone app from its next version; on an older version they choose the plan in the iPhone app as well. On a no, nothing changes: the plan they follow stays as it is.
+The member sees the saved plan as a card with its workouts and their exercises, so do not list them again and never as a table. Explain the plan in a few short sentences (step 7), naming the split and the main lifts. Where tool results show only as text, as in a terminal, add the workouts as a short list, each with its main exercises.
+
+Say that it is saved beside the plans they already have, which stay as they are. Ask whether this plan should be the one they follow, and offer in one sentence to change anything in it. End the reply with `deep_link` as its call to action: it opens their plans in the Gymlab app.
+
+When they want this plan to be the one they follow, call `gymlab_set_active_plan` with its `plan_id` after their yes, and tell them that the web app and assistants follow it at once and the Gymlab iPhone app from its next version; on an older version they choose the plan in the iPhone app as well. On a no, nothing changes: the plan they follow stays as it is.
+
+When they want a change:
+
+- **Another exercise, other sets, loads or rest, a different order or a superset, or an exercise that does not suit their equipment or a limitation**: change the saved plan's workout with the adjust-training skill. It swaps, removes, adds and re-targets exercises with `gymlab_edit_workout_exercises` and `gymlab_add_exercise_to_workout`, and shows each change before it saves.
+- **Another name, or the same workouts trained more or less often**: change the saved plan with `gymlab_update_plan`, through the adjust-training skill.
+- **Another goal or another schedule (more or fewer workouts, or another split)**: that is a new plan, because one interview backs one plan and this one is used. Start a new interview with `gymlab_plan_interview` without `interview_id`, with what the member has told you in `answers`, then design and save the new plan as above. The first plan stays with their plans; offer to delete it with `gymlab_delete_plan`.
 
 ## 7. Explain the plan
 
-When you present the plan, explain it in plain words: what it helps them achieve, what it does (how many workouts, how often, the structure, how long a session takes), why each main choice fits them, and how it works around their limitations. Back choices with research only where a well-established finding applies, and never invent or guess a study, a figure or who found it. Everything you say must match the plan. Do not guess at the cause of a limitation, and promise no result or timeline. The details are in "Explaining the plan" in `references/plan-design.md`.
+In the reply after the save, explain the plan in plain words: what it helps them achieve, what it does (how many workouts, how often, the structure, how long a session takes), why the main choices fit them, and how it works around their limitations. Back choices with research only where a well-established finding applies, and never invent or guess a study, a figure or who found it. Everything you say must match the saved plan. Do not guess at the cause of a limitation, and promise no result or timeline. The details are in "Explaining the plan" in `references/plan-design.md`.
 
 ## Saving a program the member supplies
 
@@ -139,5 +139,5 @@ When you present the plan, explain it in plain words: what it helps them achieve
    - A percentage of a max becomes kilograms when the member gives the max, or, if they agree, from the current estimate Gymlab has for the lift. Otherwise the set is saved without a weight, with the percentage in `notes`.
    - Pounds become kilograms (× 0.45359237) and miles kilometers (× 1.609344); `unit_system` makes the app show their units again.
    - An exercise the program gives no rest gets the member's own rest for the exercise, else the exercise's default, else 90 seconds.
-5. Show the member the program as it will be saved. After they confirm, save it with `gymlab_create_plan`, `member_supplied` true and no `interview_id`, as the only tool call of its turn. Keep the program's own plan and workout names.
-6. Give the member `deep_link`, and offer to make the program the plan they follow, as in step 6.
+5. Once nothing is unclear and the member has agreed to what you convert, save it with `gymlab_create_plan`, `member_supplied` true and no `interview_id`. Do not first ask them to confirm the whole program. Keep the program's own plan and workout names.
+6. Say in a sentence or two what you converted, ask them to check the saved card for anything misread (where tool results show only as text, list the workouts and their exercises as saved instead), offer to make the program the plan they follow, as in step 6, and end the reply with `deep_link` to open it in the Gymlab app. Fix a misread exercise, set or load in the saved plan with the adjust-training skill. A workout missed, added or out of order cannot be edited: save the corrected program as a new plan, then offer to delete the first with `gymlab_delete_plan` once the member confirms.
