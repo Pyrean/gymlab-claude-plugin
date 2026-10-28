@@ -1,6 +1,6 @@
 ---
 name: plan-training
-description: "Use when a Gymlab member asks for a new training plan or program, wants their current plan rebuilt, replaced or adapted to a new goal, schedule, injury or equipment, or brings a program they already follow (from a coach, a book or their own notes) to save in Gymlab. Interviews the member through the Gymlab plan interview, reads their logged training to set loads, designs the plan to Gymlab's coaching standards, saves it to their Gymlab account once they confirm it, and offers to make it the plan they follow."
+description: "Use when a Gymlab member asks for a new training plan or program, wants their current plan rebuilt, replaced or adapted to a new goal, schedule, limitation or equipment, or brings a program they already follow (from a coach, a book or their own notes) to save in Gymlab. Interviews the member through the Gymlab plan interview, reads their logged training to set loads, designs the plan to Gymlab's coaching standards, saves it to their Gymlab account once they confirm it, and offers to make it the plan they follow."
 ---
 
 # Plan training with Gymlab
@@ -44,10 +44,10 @@ Read the other fields as they come:
 - Use everyday language and short sentences. Explain a training term the first time you need it.
 - When the member is unsure, offer a concrete suggestion instead of leaving the choice open.
 - Accept "not sure", "no preference" and "you choose" as answers, and do not ask again for the same thing.
-- Keep unknowns apart from negative answers. Pass `limitations` as "none" only when the member said they have none: an unanswered injury question is not "none".
+- Keep unknowns apart from negative answers. Pass `limitations` as "none" only when the member said they have none: an unanswered question about limitations is not "none".
 - If the member asks you something, answer briefly, then continue with the next question.
-- Ask only what this plan or workout needs. Do not ask about their job, daily routine, body measurements or health history unless they raise it and it changes what you build.
-- Do not give medical advice or diagnose an injury or pain. Plan around what the member tells you, and when pain is new, getting worse or has not been assessed, suggest they have it checked by a doctor or physiotherapist.
+- Ask only what this plan or workout needs. Do not ask about their job, daily routine or body measurements unless they raise it and it changes what you build.
+- Keep to training. Plan around the limitations the member describes, in their words, and do not guess at their cause. When they say a movement does not feel right, leave it out and do not push it.
 - Do not design the plan or suggest exercises during the interview. The plan follows once the interview is complete and the member has agreed the number of workouts and their order.
 
 What to find out, and how to handle unknowns, schedules and experienced members: `references/interview.md`.
@@ -79,14 +79,15 @@ These numbers set the loads (`references/loads.md`). Never invent facts about th
 Design with `references/plan-design.md`, set loads with `references/loads.md`, and choose and measure exercises with `references/exercises.md`. The essentials:
 
 - A plan is an ordered rotation of workouts with no calendar dates: as a rule one workout per training day the member asked for, in the order they train them, repeated from the top.
-- Every workout uses only the equipment they have, leaves out every exercise they excluded and anything that could aggravate an injury they described, warms up each muscle group before its working sets, and fits the agreed length.
-- Every exercise comes from `gymlab_search_exercises` by its `exercise_id` and is measured by one of its `allowedExerciseTypes`. When the exercise you would choose does not fit their equipment, an injury or what they avoid, find a substitute with `gymlab_find_exercise_alternatives` (`references/exercises.md`).
+- Every workout uses only the equipment they have, leaves out every exercise they excluded and any movement their limitations rule out, warms up each muscle group before its working sets, and fits the agreed length.
+- Every exercise comes from `gymlab_search_exercises` by its `exercise_id` and is measured by one of its `allowedExerciseTypes`. When the exercise you would choose does not fit their equipment, their limitations or what they avoid, find a substitute with `gymlab_find_exercise_alternatives` (`references/exercises.md`).
 - Every weighted set has a concrete weight in kilograms, set from the member's own numbers wherever Gymlab has them.
 
 Compute each workout's length yourself and keep it within 5 minutes of the length the member gave:
 
 - **Exercise time:** for each set, `target_reps` × 3 seconds, or its `target_duration_secs`; for a set of a `distance` exercise, your own estimate of how long this member needs for that distance.
 - **Rest:** (sets − 1) × `rest_seconds_between_sets` for each exercise in straight sets. A superset instead rests once after each round except the last, for the longest rest among its members.
+- **Drops:** each drop in a set's `drops` adds its own exercise time plus 10 seconds to change the weight, and no rest; a drop set counts as one set in (sets − 1) and in a superset's rounds.
 - **Switching:** (number of units − 1) × 60 seconds, where a unit is one exercise in straight sets or one superset.
 
 When you leave out `rest_seconds_between_sets`, Gymlab uses the member's own rest for the exercise, else the exercise's default, else 90 seconds: count with the same value. Warm-up and cool-down exercises count too.
@@ -98,7 +99,7 @@ Review the draft against "What a finished plan satisfies" in `references/plan-de
 Show the complete plan before you save anything:
 
 - The plan's name, the number of workouts and their order.
-- For each workout: its name, its length, and its exercises in order, each with sets × reps (or time or distance), the load in the member's units, the target RPE and the rest, with supersets marked.
+- For each workout: its name, its length, and its exercises in order, each with sets × reps (or time or distance), the load in the member's units, the target RPE and the rest, with supersets and drop sets marked.
 - Why the plan fits them (step 7).
 
 Ask the member to confirm it or say what to change. Change it with them as often as they like, recompute the lengths, and show what changed. Save only the version they confirmed. When they change the goal, how often they train, the length, their equipment or their limitations, record that with `gymlab_plan_interview` first: the plan is saved against the interview's answers.
@@ -109,7 +110,7 @@ After the member has confirmed, make `gymlab_create_plan` the only tool call of 
 
 - `interview_id`: the complete interview's, before its `valid_until`.
 - `name` (at most 35 characters in English), `goal` in the member's words, and `unit_system` from their `unitSystem`.
-- `workouts` in training order, each with a `name` (at most 30 characters in English), a `description` (what the workout concentrates on, why it is in the plan and in this place, and any adjustment you made), and its `exercises` in order: `exercise_id`, `exercise_type` when it is not the exercise's default, `rest_seconds_between_sets`, `superset_group` for superset members, `instructions` or `notes` where useful, and `sets` with the targets the type needs (`target_reps`, `target_weight_kg`, `target_duration_secs`, `target_distance_km`) and `target_rpe`.
+- `workouts` in training order, each with a `name` (at most 30 characters in English), a `description` (what the workout concentrates on, why it is in the plan and in this place, and any adjustment you made), and its `exercises` in order: `exercise_id`, `exercise_type` when it is not the exercise's default, `rest_seconds_between_sets`, `superset_group` for superset members, `instructions` or `notes` where useful, and `sets` with the targets the type needs (`target_reps`, `target_weight_kg`, `target_duration_secs`, `target_distance_km`), `target_rpe` and, for a drop set, its `drops`.
 
 Write names, descriptions and notes in the member's language; exercise names stay English.
 
@@ -125,7 +126,7 @@ Then ask whether this plan should be the one they follow. On a yes, call `gymlab
 
 ## 7. Explain the plan
 
-When you present the plan, explain it in plain words: what it helps them achieve, what it does (how many workouts, how often, the structure, how long a session takes), why each main choice fits them, and how it works around their limitations. Back choices with research only where a well-established finding applies, and never invent or guess a study, a figure or who found it. Everything you say must match the plan. Make no diagnosis or medical claim, and promise no result or timeline. The details are in "Explaining the plan" in `references/plan-design.md`.
+When you present the plan, explain it in plain words: what it helps them achieve, what it does (how many workouts, how often, the structure, how long a session takes), why each main choice fits them, and how it works around their limitations. Back choices with research only where a well-established finding applies, and never invent or guess a study, a figure or who found it. Everything you say must match the plan. Do not guess at the cause of a limitation, and promise no result or timeline. The details are in "Explaining the plan" in `references/plan-design.md`.
 
 ## Saving a program the member supplies
 

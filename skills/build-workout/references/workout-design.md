@@ -50,7 +50,7 @@ Weigh each exercise's benefit against the risk it carries, and take fatigue into
 
 The member's favourites and the exercises they avoid are in the interview's `exercise_preferences`, and in `favoriteExercises` and `avoidExercises` from `gymlab_get_preferences`; where they differ, the interview's answers win. Feature a favourite as a main movement when it fits today's focus and recovery: training the member will actually turn up for beats a marginally better movement they dread.
 
-Exclusions are absolute. An exercise the user asked to avoid — or one that could aggravate an injury they described — must NEVER appear, even where it would have been the ideal choice. Where you are unsure whether a movement could aggravate an injury, leave it out. Substitute a functionally similar movement instead, and if that weakens the session, say so in that workout's `description`. You may deliberately program work that strengthens a described weak point or supports recovery, provided the movement itself cannot aggravate the injury.
+Exclusions are absolute. An exercise the user asked to avoid — or any movement their limitations rule out — must NEVER appear, even where it would have been the ideal choice. When you are unsure whether a movement suits their limitations, leave it out. Substitute a functionally similar movement instead, and if that weakens the session, say so in that workout's `description`. You may deliberately program work that strengthens a described weak point, provided the movement itself stays within their limitations.
 
 ## Session length
 
@@ -61,6 +61,7 @@ Compute the workout's total time as the sum of:
 - **Exercise time** — for time-based sets (`bodyweight_time`, `weighted_time`, `distance_time`, `time_only`), the sum of each set's `target_duration_secs`. For rep-based sets (`bodyweight_reps`, `weighted_reps`), the sum of `target_reps` × 3 seconds across sets. For sets of a `distance` exercise, your own estimate of how long this member needs for that distance on that exercise, judged from their age, training level and recent performance — there is no fixed pace (a 500 m row or a 5 km run takes a beginner and a trained athlete very different times; a 20 m sled push is a slow effort).
 - **Rest time** — (number of sets − 1) × `rest_seconds_between_sets`, for each exercise in straight sets.
 - **Superset rest** — for each superset, instead of its members' rest above: its members' exercise time is already counted above; add only one round rest after each round except the last, where round n is each member's n-th set (so rounds is the largest set count among its members) and a round's rest is the longest `rest_seconds_between_sets` among the members that have a set in that round. There is no rest between the exercises of a round.
+- **Drop time** — each drop in a set's `drops` adds 10 seconds to change the weight on top of its exercise time above, and no rest. Drops are not sets in the rest and round counts: "number of sets" and "round n" count only the sets the drops continue.
 - **Switch time** — (number of units − 1) × 60 seconds, where a unit is one exercise in straight sets or one superset.
 
 Gymlab computes the length it shows the member the same way, except that it times a `distance` set at a typical pace for the activity. When time matters more than distance, prefer `distance_time` with a `target_duration_secs` where the exercise allows it.
@@ -80,35 +81,33 @@ Every muscle group the workout trains is warmed up before its working sets, eith
 
 Do not over-warm: no extensive warm-up sets for muscles the warm-up exercises already prepared, and none on later exercises for the same muscles.
 
-The save tools take no set type, so a set's purpose shows in its weight, its `target_rpe` and its place in the order; say which sets are warm-ups in the exercise's `notes` when it is not obvious.
+The save tools take no set type, so a set's purpose shows in its weight, its `target_rpe` and its place in the order; say which sets are warm-ups in the exercise's `notes` when it is not obvious. Drops are the one exception: they go in their set's `drops`.
 
 - **Warm-up sets:** lighter sets ramping up to the working weight, RPE 4-6, never to failure.
 - **Working sets:** the main training stimulus at the target intensity, RPE 7-9; progressive overload is tracked on them. Most sets are working sets.
 - **Back-off sets:** reduced-intensity sets after heavy work, RPE 5-7, at 40-60% of the working weight.
+- **Drops:** a continuation of the set before them, not sets of their own: straight after that set, with no rest, the member lowers the weight and keeps going close to failure. A drop set is that set plus 1 to 3 drops in its `drops`, each about 20-30% lighter than the part before, and counts as one set. A drop needs `target_reps` (`target_duration_secs` on `weighted_time`) and a concrete `target_weight_kg` like every set, and takes no `target_rpe`: the set's is its effort before the first drop. Only `weighted_reps` and `weighted_time` exercises take drops, never a warm-up set.
 
 For example, a squat for an intermediate member: 40 kg × 10 at RPE 5 and 60 kg × 8 at RPE 6 to warm up, then 80 kg × 6 at RPE 8 for the working sets.
 
-## Supersets
+## Supersets and drop sets
+
+Supersets and drop sets fit the same training into less time. Neither builds more muscle or strength than straight sets with the same work, and both cost more: higher effort and slower recovery, most of all a drop set taken to failure. Use them when they make this member's training better, most often when time is short, not for their own sake; many good workouts and plans have neither.
 
 A superset is 2 to 10 different exercises done back to back in rounds: one set of each member, then the rest, then the next round. Give every member of one superset the same short `superset_group` label ("A", "B", ...), unique within the workout, and list the members next to each other in the workout's exercises. Leave `superset_group` out for every exercise done in straight sets. A label on a single exercise, on exercises that are not next to each other, on more than 10 exercises or on the same exercise twice is ignored, and those exercises are saved as straight sets; the save's result shows each exercise's `superset_group` as saved.
 
-Choose a superset when it is the better way to train:
+Members keep their own sets, reps and loads, usually equal set counts. Their `rest_seconds_between_sets` is the rest after each round; there is no rest between the exercises of a round. Warm-up and cool-down exercises are never in a superset with main exercises. A circuit of stations done in rounds is one superset. Supersets shorten a session by about a third.
 
-- The member is short on time, or asks for a short, quick or all-out session.
-- Conditioning, metabolic or finisher work.
-- Training naturally done in rounds: parkour, calisthenics circuits, kettlebell and bodyweight conditioning. A circuit of several stations is one superset.
-- Pairs whose fatigue costs little: opposing muscles (a press with a row), arms (biceps with triceps), unrelated areas (an upper-body exercise with core).
+- Opposing muscles (a press with a row), biceps with triceps, or unrelated areas keep the volume of straight sets.
+- Two exercises for the same muscle lower the loads and reps of both: deliberate local fatigue for an experienced member, not a time saver.
+- A lift whose strength the member is building or tracking does best in straight sets with full rest when there is time; its accessories can still be paired.
+- A pair holds two stations at once, which a busy gym may not allow.
 
-Keep straight sets when:
+A drop set is one set continued straight away, without rest, at lower weights: give the set its `drops`, written as the set types describe. It suits any exercise with a weight, best on the last set of an exercise late in the session, on machines, cables, dumbbells and isolation work, for hypertrophy or a short session. Under a heavy barbell squat, bench press or deadlift, form breaks down near failure, and lifts trained for speed or technique gain nothing from it. One or two exercises with a drop set give most of the time saving; more mostly add fatigue.
 
-- The exercise is a lift whose strength the member is building or tracking and there is time for straight sets. A superset lowers its loads.
-- Both exercises are heavy barbell lifts, or they need two stations that cannot both be held in a busy gym, such as two machines in different areas.
-- Both exercises train the same muscle, unless the goal is intensity and the member is experienced.
-- The member is still learning the exercise's technique.
+Weigh the member's experience: someone in their first months progresses well on straight sets and is still learning technique, so drop sets rarely help them, while simple machine or dumbbell supersets do when time is short. Peaking, taper and deload work exists to shed fatigue, so neither fits there, and a drop set's recovery cost matters when the same muscles train again the next day.
 
-The member's wish wins. Read `supersetPreference` with `gymlab_get_preferences`: `avoid`, or a wish against supersets in what they told you, means no supersets at all; `prefer` means using them wherever these rules allow. Warm-up and cool-down exercises are never in a superset with main exercises.
-
-Members keep their own sets, reps and loads. Give them equal set counts unless one member deliberately needs fewer. Their `rest_seconds_between_sets` is the rest after each round; there is no rest between the exercises of a round. When you use a superset, say why in the workout's `description` in a few plain words, for example "Paired to fit your 40 minutes".
+The member's wish wins. Read `supersetPreference` with `gymlab_get_preferences`: `avoid`, or a wish against supersets in what they told you or in their `text_preferences`, means no supersets at all; `prefer` means using them wherever they fit. Drop sets have no setting: a wish against them in what they told you or in their `text_preferences` means none, and a wish for them means using them wherever they fit. When you use either, say why in the workout's `description` in a few plain words, for example "Paired to fit your 40 minutes".
 
 ## Recovery
 
@@ -141,4 +140,4 @@ The interview's answers (focus, length, equipment, limitations) win over any sav
 
 ## Name and description
 
-Name the workout for what it trains, descriptive and at most 30 characters in English ("Lower Body Strength", "Push - Chest Focus", "Full Body Conditioning"), never "Workout 1". Its `description` says in a few plain sentences what the workout is for, how it fits today's recovery, and why any superset is there.
+Name the workout for what it trains, descriptive and at most 30 characters in English ("Lower Body Strength", "Push - Chest Focus", "Full Body Conditioning"), never "Workout 1". Its `description` says in a few plain sentences what the workout is for, how it fits today's recovery, and why any superset or drop set is there.

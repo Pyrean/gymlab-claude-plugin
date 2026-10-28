@@ -16,8 +16,8 @@ https://www.gymlab.ai/ai-assistants
   at a time, reads your training before it designs, saves the plan only after you confirm it, and
   offers to make it the plan you follow.
 - `build-workout`: when you want a single workout for today or another day. Claude asks what you
-  want to train, or picks the focus from how recovered your muscles are, and fits the workout into
-  the time you have.
+  want to train, or picks the focus from how recovered your muscles are, fits the workout into the
+  time you have, saves it and gives you a link that opens it in the Gymlab app.
 - `review-progress`: when you ask how your training is going: progress on a lift over time,
   records, consistency, strain and recovery, or whether to take a lighter week.
 - `log-workout`: when you report a finished session. Claude collects what you did set by set,

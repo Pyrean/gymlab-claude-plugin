@@ -18,7 +18,7 @@ Each search result also carries the exercise's `muscleGroups` and `equipment`, a
 
 ## An exercise that does not suit the member
 
-When the exercise you would choose needs equipment the member lacks, could aggravate an injury they described, or is one they avoid, find a substitute with `gymlab_find_exercise_alternatives`: pass its `exercise_id`, the equipment slugs they have as `available_equipment`, and the muscles to keep out as `exclude_muscles`. It lists catalog exercises that work the same main muscle, with their equipment and `allowedExerciseTypes`. Its muscle filter follows how the catalog tags exercises and does not judge whether a movement is safe for an injury: the exclusion rules still decide.
+When the exercise you would choose needs equipment the member lacks, is ruled out by their limitations, or is one they avoid, find a substitute with `gymlab_find_exercise_alternatives`: pass its `exercise_id`, the equipment slugs they have as `available_equipment`, and the muscles to keep out as `exclude_muscles`. It lists catalog exercises that work the same main muscle, with their equipment and `allowedExerciseTypes`. Its muscle filter follows how the catalog tags exercises and does not judge whether a movement suits the member's limitations: the exclusion rules still decide.
 
 ## Measurement types
 

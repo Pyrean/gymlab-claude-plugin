@@ -48,7 +48,7 @@ A broad question ("how am I doing?") takes several reads: the frequency and stre
 - A change inside the steady rule in references/metrics.md is steady, not progress or decline.
 - Say when data is thin: few sessions, a wide range, a large `daysSinceObservation`, low strain confidence, or an `empty_reason`. Say what would make it clearer (logging RPE, a few more sessions).
 - Never invent or extrapolate a number. Every number you give comes from a tool result in this conversation, or is a conversion of one.
-- No medical advice. Strain is a training-load signal, not a diagnosis. Pain, an injury, illness or unusual symptoms go to a qualified professional; do not interpret them.
+- Keep to training. Strain is a training-load signal, not a verdict on the member's body. When the member says a movement does not feel right, do not interpret it: leave that movement out of what you suggest, and do not push it.
 - Never encourage a true one-rep max attempt without qualified supervision.
 
 ## When a deload or a plan change is worth raising
@@ -56,14 +56,14 @@ A broad question ("how am I doing?") takes several reads: the frequency and stre
 Raise it as an option, with the observations and their numbers, and let the member decide. Do not raise it on strain below the confidence threshold alone.
 
 - **An easier day or a rest day:** today's strain shows a muscle at `avoid_direct_work` or `rest_or_deload`, or the day's sentence says strain is high across several muscle groups. Name the muscles, their strain and when they were last trained.
-- **A lighter week:** the `weekly` strain averages have stayed well above the member's own earlier weeks for two weeks or more, and the main lifts have stopped moving: their estimates steady in `gymlab_get_exercise_progress`, no new `e1rm` or `weight` records in that time, top sets in recent sessions no heavier, or `avgRpe` rising at the same `avgWeight`. Both together are a stronger case than either alone. If the member also reports poor sleep or feeling run down, that adds to it.
+- **A lighter week:** the `weekly` strain averages have stayed well above the member's own earlier weeks for two weeks or more, and the main lifts have stopped moving: their estimates steady in `gymlab_get_exercise_progress`, no new `e1rm` or `weight` records in that time, top sets in recent sessions no heavier, or `avgRpe` rising at the same `avgWeight`. Both together are a stronger case than either alone. If the member also says they have been feeling unusually tired, that adds to it.
 - **A plan change:** the member trains far less often than the plan asks (`frequency` against the plan's `targetPerWeek`) for several weeks, their goal has changed, the main lifts have set no records and their top sets have not moved for a month or more despite regular training, or a major muscle has no sets week after week (`relative_set_index` and `completed_set_count` near zero) when their goal needs it.
 
-State these as what the data shows ("your weekly strain has averaged 58 for three weeks, against about 40 before, and your squat records date from 3 August"), not as a diagnosis.
+State these as what the data shows ("your weekly strain has averaged 58 for three weeks, against about 40 before, and your squat records date from 3 August"), not as a verdict on their body.
 
 ## Handing over
 
 - The member wants a new plan, or theirs rebuilt or replaced: use the plan-training skill; it starts with `gymlab_plan_interview`. Pass on what you found as context for the member to confirm, not as answers.
 - The member wants a workout for today or another day, for example a lighter session: use the build-workout skill; it starts with `gymlab_workout_interview`, whose `recovery` reads the same strain.
-- The member wants to change a workout or plan they have, for example fewer sets on a tired muscle, another exercise for one that hurts, or fewer sessions a week: use the adjust-training skill.
+- The member wants to change a workout or plan they have, for example fewer sets on a tired muscle, another exercise for one that does not feel right, or fewer sessions a week: use the adjust-training skill.
 - The member wants to save a session they finished: use the log-workout skill.

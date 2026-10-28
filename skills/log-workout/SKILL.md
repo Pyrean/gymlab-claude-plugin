@@ -1,6 +1,6 @@
 ---
 name: log-workout
-description: "Applies when a Gymlab member has finished a workout and wants it saved to their Gymlab history: they say they did today's or another saved workout, list or paste the sets they did, report a run, ride or other timed or distance work, or ask to log, record or save a session. Covers matching the session to a saved workout or the next workout, collecting what was actually done set by set, converting pounds and miles, effort as RPE, the date and time zone, supersets and exercises outside the workout, confirming with the member, and saving the session exactly once."
+description: "Applies when a Gymlab member has finished a workout and wants it saved to their Gymlab history: they say they did today's or another saved workout, list or paste the sets they did, report a run, ride or other timed or distance work, or ask to log, record or save a session. Covers matching the session to a saved workout or the next workout, collecting what was actually done set by set, converting pounds and miles, effort as RPE, the date and time zone, supersets, drop sets and exercises outside the workout, confirming with the member, and saving the session exactly once."
 ---
 
 # Log a finished workout
@@ -68,15 +68,21 @@ Find each one with `gymlab_search_exercises` and use the `id` and `name` exactly
 
 For exercises done back to back, one set of each per round, give every set of the superset a `superset_group` (one label for the group, for example "A") and a `superset_round` counted from 1: the sets of the different exercises in the same round share both. A set keeps the pair only when a set of another exercise in the session has the same pair; otherwise it is saved as a straight set. A planned `superset_group` shows what was intended; log what the member actually did.
 
-## 7. When it ended
+## 7. Drop sets
+
+A drop set is one set the member continued straight away, without rest, at lower weights: for example 55 kg × 10, then straight on with 45 kg × 8 and 35 kg × 8. Log it as one set with its parts after the first in `drops`, in order, at most 5: each drop has its own `reps` (`duration_secs` on a `weighted_time` exercise) and its lower `weight_kg`. A drop has no `rpe`: the set's `rpe` is the effort before the first drop, so ask how many more reps were left before the weight came off. A drop uses the set's `implement_count` and superset round. Only `weighted_reps` and `weighted_time` exercises take drops.
+
+The set and its drops count as one set, and every drop adds to the volume. Log a drop set this way only when the member did one: lighter sets after a rest are ordinary sets. A planned drop set (`drops` in `gymlab_get_next_workout` or `gymlab_get_workout`) shows what was intended; log the drops the member actually did.
+
+## 8. When it ended
 
 - `completed_at`: when the session ended, as UTC (for example `2026-06-05T18:00:00Z`). Leave it out when the member has just finished; it defaults to now. It cannot be in the future or before 1 January 2000.
 - `time_zone`: the member's IANA time zone (for example `America/Chicago`). It decides the calendar day the session counts on, for the streak and strain. Ask when you do not know it, and convert their local time to UTC with it: a session that ended at 7:15 pm on 4 June in Chicago is `2026-06-05T00:15:00Z`, and with `time_zone` it still counts on 4 June.
 - `completed_local_date`: only when the member's calendar day differs from what `completed_at` and `time_zone` give; it must be within one day of `completed_at`. Usually leave it out.
 
-## 8. Confirm, then save once
+## 9. Confirm, then save once
 
-Show the member what you will save: the workout (or that it is not a saved workout), the title, the day and end time in their time zone, the duration, and every exercise with its sets in their units, RPE and supersets. Tell them two things before they confirm:
+Show the member what you will save: the workout (or that it is not a saved workout), the title, the day and end time in their time zone, the duration, and every exercise with its sets in their units, RPE, supersets and drop sets. Tell them two things before they confirm:
 
 - If they have connected Hevy to Gymlab, the session is also posted to their Hevy account as a public workout, as a session logged in the app is. It is not posted to any Gymlab community.
 - Once saved, it can be changed or deleted only in the Gymlab app.
@@ -89,8 +95,8 @@ Before the first call, generate one UUID for this session and send it as `client
 - If the error says the id belongs to a session started in the Gymlab app that is not finished, nothing was saved: generate a new id and call again.
 - Every other session gets its own new id. Never reuse one for a different session, and never call again with a new id for a session that may already be saved: check `gymlab_list_workout_sessions` first.
 
-One session per call, at most 50 exercises with at most 50 sets each.
+One session per call, at most 50 exercises with at most 50 sets each, each drop counted as a set.
 
-## 9. After saving
+## 10. After saving
 
-Report what the result's `session` shows: its day (`completedLocalDate`), `setsCompleted` and `volume` (the total weight lifted, in kilograms; convert it). If you sent supersets, `gymlab_get_workout_session` shows which pairs were kept. Do not claim a new personal record unless `gymlab_get_personal_records` shows one set in this session. When the member asks how the session fits their progress, use the review-progress skill.
+Report what the result's `session` shows: its day (`completedLocalDate`), `setsCompleted` and `volume` (the total weight lifted, in kilograms; convert it). If you sent supersets or drop sets, `gymlab_get_workout_session` shows what was kept. Do not claim a new personal record unless `gymlab_get_personal_records` shows one set in this session. When the member asks how the session fits their progress, use the review-progress skill.
