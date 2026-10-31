@@ -1,6 +1,6 @@
 ---
 name: getting-started
-description: "Use when a member has just connected Gymlab or set up the Gymlab plugin, says hello without a clear request, or asks what Gymlab can do here, how to get started or what to do first. Reads where the member stands in Gymlab (setup finished in the app, a training plan, logged sessions) and answers with one short message that fits their situation: what they can do here, their next workout and how they are doing when they already train, and one question about what to do next."
+description: "Use when a member has just connected Gymlab or set up the Gymlab plugin, says hello without a clear request, or asks what Gymlab can do here, how to get started or what to do first. Reads where the member stands in Gymlab (a training plan, logged sessions) and answers with one short message that fits their situation: what they can do here, their next workout and how they are doing when they already train, and one question about what to do next."
 ---
 
 # Get started with Gymlab
@@ -20,14 +20,13 @@ Call these two tools before you write anything, in the same turn:
 
 Then take the first case that applies:
 
-| What the results show               | The member's situation                                   |
-| ----------------------------------- | -------------------------------------------------------- |
-| `preferences` is null               | They have not finished setup in the Gymlab app (case A). |
-| `preferences.workoutPlanCount` is 0 | Set up, but no training plan yet (case B).               |
-| `sessions` is empty                 | A plan, but nothing logged yet (case C).                 |
-| anything else                       | They already train with Gymlab (case D).                 |
+| What the results show                                         | The member's situation                   |
+| ------------------------------------------------------------- | ---------------------------------------- |
+| `preferences` is null, or `preferences.workoutPlanCount` is 0 | No training plan yet (case A).           |
+| `sessions` is empty                                           | A plan, but nothing logged yet (case B). |
+| anything else                                                 | They already train with Gymlab (case C). |
 
-Cases C and D read one or two more tools, named below. When you know the member's IANA time zone, pass it as `time_zone` to the tools that take it; do not ask for it only for this message.
+Cases B and C read one or two more tools, named below. When you know the member's IANA time zone, pass it as `time_zone` to the tools that take it; do not ask for it only for this message.
 
 ## 2. Write one message
 
@@ -40,17 +39,7 @@ Every case follows the same rules:
 
 What Gymlab can do here, in one or two sentences or a short list, when the case asks for it: design a training plan with them and save it to Gymlab, build a workout for today, review their progress (lifts, records, consistency, recovery), log a session they finished, and change a saved workout or plan.
 
-### Case A: setup is not finished
-
-Gymlab's setup happens in the Gymlab iPhone app. Its onboarding asks about their goals and training and builds their first plan.
-
-- Say in a sentence what Gymlab can do here.
-- Tell them to start with the onboarding in the Gymlab iPhone app, which builds their first plan, and to come back here once it is done.
-- Ask whether they already have the Gymlab app on their iPhone.
-
-Do not design a plan here or ask the onboarding's questions yourself.
-
-### Case B: no plan yet
+### Case A: no plan yet
 
 - Say what Gymlab can do here.
 - Tell them that the first step is their first training plan, which you build together: a few questions about their goal, schedule, equipment and any limitations, then a plan saved to their Gymlab account, with a link to open it in the Gymlab app.
@@ -58,7 +47,7 @@ Do not design a plan here or ask the onboarding's questions yourself.
 
 When they say yes, use the plan-training skill; it starts with `gymlab_plan_interview`.
 
-### Case C: a plan, nothing logged yet
+### Case B: a plan, nothing logged yet
 
 Call `gymlab_get_next_workout`. Then:
 
@@ -66,11 +55,11 @@ Call `gymlab_get_next_workout`. Then:
 - Say how logging works: they log a session in the Gymlab app on their iPhone or Apple Watch while they train, or they tell you afterwards what they did and you save it for them. Logged sessions are what their progress, records and streak are built from.
 - Ask whether they want to go through this workout now.
 
-### Case D: already training
+### Case C: already training
 
 Call `gymlab_get_next_workout` and `gymlab_get_streak`. Then, briefly:
 
-- Their next workout and its plan, as in case C.
+- Their next workout and its plan, as in case B.
 - Their last session, from `gymlab_list_workout_sessions`: its title and the day it ended.
 - Their week streak (`week_streak`), called a week streak: it counts weeks with at least one session, not days. Leave it out when `empty_reason` says there is none.
 

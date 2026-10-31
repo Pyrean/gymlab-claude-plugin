@@ -4,13 +4,14 @@ Gymlab is a strength training app for iPhone and Apple Watch. This plugin connec
 Gymlab account and adds six skills that carry the approach Gymlab's own coach takes, so that Claude
 plans, builds, reviews, logs and adjusts your training the way the app does.
 
-You need a Gymlab account, set up in the iPhone app. Setup guide:
+You need a Gymlab account. When you connect, you sign in to Gymlab or create an account on
+Gymlab's own page, and add anything your account is still missing. Setup guide:
 https://www.gymlab.ai/ai-assistants
 
 ## Skills
 
 - `getting-started`: when you have just connected Gymlab or ask what it can do. Claude reads where
-  you stand (setup, plan, logged sessions) and answers with your next step and one question.
+  you stand (plan, logged sessions) and answers with your next step and one question.
 - `plan-training`: when you want a new training plan or program, want yours rebuilt, or bring a
   program of your own to save, typed, pasted or in a photo. Claude asks Gymlab's plan questions one
   at a time, reads your training before it designs, saves the plan and gives you a link that opens
@@ -37,7 +38,7 @@ this plugin names in `.mcp.json`. Claude calls it only after you sign in with yo
 and only for your own account. Through it Claude can read your workout plans and workouts, logged
 sessions, personal records, exercise statistics and strength estimates, muscle strain and recovery,
 your streak, your exercise notes and your training preferences, which include your sex. The plan and
-workout questions also read what you told Gymlab's coach about your equipment, injuries and
+workout questions also read your age, height and weight, and what you told Gymlab's coach about your equipment, injuries and
 limitations, and which exercises you like or avoid, together with a summary of your logged
 training. Claude can create plans and workouts, edit a workout's details and its exercises (swap,
 remove, reorder, change their sets and supersets) and add exercises to it, rename a plan and change
